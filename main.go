@@ -36,7 +36,7 @@ func main() {
 
 	//!------------------------CRUD in go mongo driver------------------------------
 
-	//! Insert a document
+	//! C : Insert a document
 	person := Person{Name: "John"}
 	insertResult, err := collection.InsertOne(context.Background(), person)
 	if err != nil {
@@ -44,7 +44,15 @@ func main() {
 	}
 	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
 
-	//! Update a document
+	//! R : Find a document
+	var result Person
+	err = collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Found a single document: %+v\n", result)
+
+	//! U : Update a document
 	filter := bson.M{"name": "John"}
 	update := bson.M{"$set": bson.M{"name": "Jane"}}
 	updateResult, err := collection.UpdateOne(context.Background(), filter, update)
@@ -53,15 +61,7 @@ func main() {
 	}
 	fmt.Printf("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
 
-	//! Find a document
-	var result Person
-	err = collection.FindOne(context.Background(), filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Found a single document: %+v\n", result)
-
-	//! Delete a document
+	//! D : Delete a document
 	deleteResult, err := collection.DeleteOne(context.Background(), filter)
 	if err != nil {
 		log.Fatal(err)
